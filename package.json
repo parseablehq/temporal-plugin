@@ -1,20 +1,67 @@
 {
-  "name": "temporal-hello-world",
+  "name": "@parseable/temporal",
   "version": "0.1.0",
-  "private": true,
+  "description": "Temporal middleware plugin that ships workflow and activity execution events to Parseable as OpenTelemetry logs and traces.",
+  "keywords": [
+    "temporal",
+    "temporalio",
+    "parseable",
+    "opentelemetry",
+    "observability",
+    "logging",
+    "tracing",
+    "plugin",
+    "interceptor"
+  ],
+  "license": "Apache-2.0",
+  "author": "Parseable, Inc.",
+  "homepage": "https://github.com/parseablehq/temporal-plugin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parseablehq/temporal-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/parseablehq/temporal-plugin/issues"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./workflow": {
+      "types": "./lib/workflow.d.ts",
+      "default": "./lib/workflow.js"
+    }
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "lib/**/*.d.ts.map",
+    "lib/**/*.js.map",
+    "README.md",
+    "INTEGRATION.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc --build",
     "build.watch": "tsc --build --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.dev.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
-    "start": "ts-node src/worker.ts",
-    "start.watch": "nodemon src/worker.ts",
-    "workflow": "ts-node src/client.ts",
-    "workflow:fail": "ts-node src/fail-client.ts",
-    "workflow:event": "ts-node src/event-client.ts",
-    "workflow:parent": "ts-node src/parent-client.ts",
-    "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts"
+    "test": "mocha --exit --require ts-node/register --require source-map-support/register test/*.test.ts",
+    "examples:worker": "ts-node examples/worker.ts",
+    "examples:worker.watch": "nodemon examples/worker.ts",
+    "examples:workflow": "ts-node examples/client.ts",
+    "examples:workflow:fail": "ts-node examples/fail-client.ts",
+    "examples:workflow:event": "ts-node examples/event-client.ts",
+    "examples:workflow:parent": "ts-node examples/parent-client.ts",
+    "prepublishOnly": "npm run build"
   },
   "nodemonConfig": {
     "execMap": {
@@ -22,8 +69,16 @@
     },
     "ext": "ts",
     "watch": [
-      "src"
+      "src",
+      "examples"
     ]
+  },
+  "peerDependencies": {
+    "@temporalio/client": "^1.17.0",
+    "@temporalio/interceptors-opentelemetry": "^1.17.0",
+    "@temporalio/plugin": "^1.17.0",
+    "@temporalio/worker": "^1.17.0",
+    "@temporalio/workflow": "^1.17.0"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.1",
@@ -33,18 +88,17 @@
     "@opentelemetry/resources": "^1.30.1",
     "@opentelemetry/sdk-logs": "^0.57.2",
     "@opentelemetry/sdk-trace-base": "^1.30.1",
-    "@opentelemetry/semantic-conventions": "^1.40.0",
+    "@opentelemetry/semantic-conventions": "^1.40.0"
+  },
+  "devDependencies": {
     "@temporalio/activity": "^1.17.0",
     "@temporalio/client": "^1.17.0",
     "@temporalio/envconfig": "^1.17.0",
     "@temporalio/interceptors-opentelemetry": "^1.17.0",
     "@temporalio/plugin": "^1.17.0",
+    "@temporalio/testing": "^1.17.0",
     "@temporalio/worker": "^1.17.0",
     "@temporalio/workflow": "^1.17.0",
-    "nanoid": "3.x"
-  },
-  "devDependencies": {
-    "@temporalio/testing": "^1.17.0",
     "@tsconfig/node20": "^20.0.0",
     "@types/mocha": "8.x",
     "@types/node": "^22.9.1",
@@ -54,6 +108,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-deprecation": "^3.0.0",
     "mocha": "8.x",
+    "nanoid": "3.x",
     "nodemon": "^3.1.7",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",

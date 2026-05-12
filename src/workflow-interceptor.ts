@@ -253,6 +253,7 @@ const outbound: WorkflowOutboundCallsInterceptor = {
     next: Next<WorkflowOutboundCallsInterceptor, 'startChildWorkflowExecution'>,
   ): Promise<[Promise<string>, Promise<unknown>]> {
     const base = workflowBase();
+    const target_workflow_id = input.options.workflowId ?? undefined;
     parseable.emitMessage({
       ...base,
       type: 'child_workflow',
@@ -260,20 +261,12 @@ const outbound: WorkflowOutboundCallsInterceptor = {
       timestamp: nowIso(),
       status: 'started',
       message_name: input.workflowType,
-      target_workflow_id: input.options.workflowId ?? undefined,
+      target_workflow_id,
     });
+    const start = Date.now();
+    let started: [Promise<string>, Promise<unknown>];
     try {
-      const result = await next(input);
-      parseable.emitMessage({
-        ...base,
-        type: 'child_workflow',
-        direction: 'outbound',
-        timestamp: nowIso(),
-        status: 'completed',
-        message_name: input.workflowType,
-        target_workflow_id: input.options.workflowId ?? undefined,
-      });
-      return result;
+      started = await next(input);
     } catch (err) {
       parseable.emitMessage({
         ...base,
@@ -282,11 +275,43 @@ const outbound: WorkflowOutboundCallsInterceptor = {
         timestamp: nowIso(),
         status: 'failed',
         message_name: input.workflowType,
-        target_workflow_id: input.options.workflowId ?? undefined,
+        target_workflow_id,
+        duration_ms: Date.now() - start,
         error: errorMessage(err),
       });
       throw err;
     }
+    const [startedHandle, resultPromise] = started;
+    const wrappedResult = resultPromise.then(
+      (r) => {
+        parseable.emitMessage({
+          ...base,
+          type: 'child_workflow',
+          direction: 'outbound',
+          timestamp: nowIso(),
+          status: 'completed',
+          message_name: input.workflowType,
+          target_workflow_id,
+          duration_ms: Date.now() - start,
+        });
+        return r;
+      },
+      (err) => {
+        parseable.emitMessage({
+          ...base,
+          type: 'child_workflow',
+          direction: 'outbound',
+          timestamp: nowIso(),
+          status: 'failed',
+          message_name: input.workflowType,
+          target_workflow_id,
+          duration_ms: Date.now() - start,
+          error: errorMessage(err),
+        });
+        throw err;
+      },
+    );
+    return [startedHandle, wrappedResult];
   },
 
   async continueAsNew(
