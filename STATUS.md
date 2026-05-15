@@ -1,6 +1,6 @@
 # v0.1 status
 
-Tracking what's done and what's left for the Temporal AI Partner Program submission. Internal — not part of the user-facing integration guide.
+Tracking what's done and what's left for the Temporal AI Partner Program submission. Internal - not part of the user-facing integration guide.
 
 | Item | Status |
 |---|---|
@@ -16,6 +16,6 @@ Tracking what's done and what's left for the Temporal AI Partner Program submiss
 | `workflowEvent()` helper for user-defined replay-safe events | done |
 | Plugin version metadata on logs and traces | done |
 | Workflow client interceptor (additional header propagation) | partial via OTel plugin |
-| Standalone npm package extraction | deferred — currently embedded in this demo repo |
+| Standalone npm package extraction | deferred - currently embedded in this demo repo |
 | SQL pack / dashboard templates | deferred to v0.1.1 |
 | Submission to Temporal partner team | pending |

@@ -5,7 +5,7 @@
 Together, the two streams give Temporal users:
 
 - A flame-graph trace of every workflow run, including child workflows and activity calls.
-- A flat, queryable log schema for fleet-wide analytics — failure rates by activity name, latency by workflow type, retry hotspots, and custom domain events emitted via a `workflowEvent()` helper.
+- A flat, queryable log schema for fleet-wide analytics - failure rates by activity name, latency by workflow type, retry hotspots, and custom domain events emitted via a `workflowEvent()` helper.
 
 ## Installation
 
@@ -37,7 +37,7 @@ const worker = await Worker.create({
 });
 ```
 
-Logs are POSTed to `${endpoint}/v1/logs`; traces to `${endpoint}/v1/traces`. Both pipelines are independently configurable — pass `logs: false` or `traces: false` to disable either layer.
+Logs are POSTed to `${endpoint}/v1/logs`; traces to `${endpoint}/v1/traces`. Both pipelines are independently configurable - pass `logs: false` or `traces: false` to disable either layer.
 
 ### Options
 
@@ -132,7 +132,7 @@ All workflow-side emission is replay-safe. The plugin uses Temporal Sinks config
 
 All logs and traces carry a `parseable.plugin.version` resource attribute so consumers can correlate behaviour with plugin releases.
 
-Trace spans are emitted by Temporal's `OpenTelemetryPlugin` — see the [Temporal TypeScript observability docs](https://docs.temporal.io/develop/typescript/observability) for the span schema.
+Trace spans are emitted by Temporal's `OpenTelemetryPlugin` - see the [Temporal TypeScript observability docs](https://docs.temporal.io/develop/typescript/observability) for the span schema.
 
 ## Links
 

@@ -6,3 +6,4 @@ lib
 .env.local
 .idea
 .vscode
+tsconfig.tsbuildinfo
